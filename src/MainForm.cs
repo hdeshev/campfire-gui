@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,35 @@ namespace CampfireGui
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			this.chatBrowser.DocumentTitleChanged += chatBrowser_DocumentTitleChanged;
+			this.chatBrowser.Navigating += chatBrowser_Navigating;
+			this.chatBrowser.Navigated += chatBrowser_Navigated;
 			this.chatBrowser.Navigate(this.config.CampfireUrl);
+		}
+
+		void chatBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+		{
+		}
+
+		void chatBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+		{
+			var targetUrl = e.Url.ToString().ToLower();
+			if (OutsideCampfire(targetUrl))
+			{
+				Process.Start(targetUrl);
+				e.Cancel = true;
+			}
+			this.Text = "Loading...";
+		}
+
+		private bool OutsideCampfire(string targetUrl)
+		{
+			return !(targetUrl.Contains("campfirenow.com") || targetUrl.Contains("37signals.com") || targetUrl.Contains("about:"));
+		}
+
+		void chatBrowser_DocumentTitleChanged(object sender, EventArgs e)
+		{
+			this.Text = this.chatBrowser.Document.Title;
 		}
 
 		private void chatBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
