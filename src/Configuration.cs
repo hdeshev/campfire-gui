@@ -1,7 +1,9 @@
 using System.Configuration;
+using System.Runtime.InteropServices;
 
 namespace CampfireGui
 {
+	[ComVisible(true)]
 	public class Configuration
 	{
 		public string CampfireUrl
