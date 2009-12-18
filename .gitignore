@@ -1,0 +1,12 @@
+bin
+obj
+Log
+*.suo
+*csproj.user
+.*.swp
+*.resharper*
+_ReSharper*
+
+#Postmark-specific
+*.log
+build
