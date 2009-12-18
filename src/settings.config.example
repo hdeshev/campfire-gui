@@ -1,0 +1,5 @@
+<appSettings>
+	<add key="CampfireUrl" value="https://wildbit.campfirenow.com" />
+	<add key="Username" value="user" />
+	<add key="Password" value="password" />
+</appSettings>
