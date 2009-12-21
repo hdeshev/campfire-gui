@@ -6,12 +6,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using mshtml;
 
 namespace CampfireGui
 {
+	[ComVisible(true)]
 	public partial class MainForm : Form
 	{
 		private Configuration config;
@@ -36,12 +39,6 @@ namespace CampfireGui
 
 		void chatBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e)
 		{
-			var targetUrl = e.Url.ToString().ToLower();
-			if (OutsideCampfire(targetUrl))
-			{
-				Process.Start(targetUrl);
-				e.Cancel = true;
-			}
 			this.Text = "Loading...";
 		}
 
@@ -57,9 +54,14 @@ namespace CampfireGui
 
 		private void chatBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
-			if (e.Url.ToString().ToLower().Contains("login"))
+			var url = e.Url.ToString().ToLower();
+			if (url.Contains("login"))
 			{
 				this.Login();
+			}
+			else if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
+			{
+				this.ChatRoom();
 			}
 		}
 
@@ -71,9 +73,29 @@ namespace CampfireGui
 			Eval(script);
 		}
 
+		private void ChatRoom()
+		{
+			this.chatBrowser.ObjectForScripting = this;
+			string script = GetScript("room.js");
+			Eval(script);
+		}
+
+		public bool OpenLink(string url)
+		{
+			if (OutsideCampfire(url))
+			{
+				Process.Start(url);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		private void Eval(string script)
 		{
-			var window = (mshtml.IHTMLWindow2) this.chatBrowser.Document.Window.DomWindow;
+			var window = (IHTMLWindow2) this.chatBrowser.Document.Window.DomWindow;
 			window.execScript(script, "javascript");
 		}
 
