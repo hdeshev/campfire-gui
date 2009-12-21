@@ -65,6 +65,18 @@ namespace CampfireGui
 			}
 		}
 
+		protected override void OnActivated(EventArgs e)
+		{
+			if (this.chatBrowser.Document != null)
+			{
+				var inputBox = this.chatBrowser.Document.GetElementById("input");
+				if (inputBox != null)
+				{
+					inputBox.Focus();
+				}
+			}
+		}
+
 		private void Login()
 		{
 			this.chatBrowser.ObjectForScripting = this.config;
