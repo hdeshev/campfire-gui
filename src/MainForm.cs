@@ -55,11 +55,7 @@ namespace CampfireGui
 		private void chatBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
 			var url = e.Url.ToString().ToLower();
-			if (url.Contains("login"))
-			{
-				this.Login();
-			}
-			else if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
+			if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
 			{
 				this.ChatRoom();
 			}
@@ -75,14 +71,6 @@ namespace CampfireGui
 					inputBox.Focus();
 				}
 			}
-		}
-
-		private void Login()
-		{
-			this.chatBrowser.ObjectForScripting = this.config;
-
-			string script = GetScript("login.js");
-			Eval(script);
 		}
 
 		private void ChatRoom()

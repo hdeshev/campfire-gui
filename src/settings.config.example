@@ -1,5 +1,3 @@
 <appSettings>
 	<add key="CampfireUrl" value="https://mycompany.campfirenow.com" />
-	<add key="Username" value="user" />
-	<add key="Password" value="password" />
 </appSettings>
