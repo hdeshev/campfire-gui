@@ -12,3 +12,15 @@
 		document.onclick = onclick;
 	});
 })();
+
+//TODO: this doesn't get invoked at all.
+Campfire.GrowlNotifier = Class.create({
+	initialize: function(chat) {
+		this.chat = chat;
+	},
+
+	onMessagesInserted: function(messages) {
+		window.external.MessageReceived();
+	}
+});
+Campfire.Responders.push("GrowlNotifier");

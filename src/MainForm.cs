@@ -27,6 +27,8 @@ namespace CampfireGui
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			this.RestoreState();
+
 			this.chatBrowser.DocumentTitleChanged += chatBrowser_DocumentTitleChanged;
 			this.chatBrowser.Navigating += chatBrowser_Navigating;
 			this.chatBrowser.Navigated += chatBrowser_Navigated;
@@ -35,6 +37,11 @@ namespace CampfireGui
 
 		void chatBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
 		{
+			var url = e.Url.ToString().ToLower();
+			if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
+			{
+				this.ChatRoom();
+			}
 		}
 
 		void chatBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e)
@@ -54,11 +61,11 @@ namespace CampfireGui
 
 		private void chatBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
-			var url = e.Url.ToString().ToLower();
-			if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
-			{
-				this.ChatRoom();
-			}
+			//var url = e.Url.ToString().ToLower();
+			//if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
+			//{
+			//    this.ChatRoom();
+			//}
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -93,6 +100,11 @@ namespace CampfireGui
 			}
 		}
 
+		public void MessageReceived()
+		{
+			FlashWindow.Flash(this);
+		}
+
 		private void Eval(string script)
 		{
 			var window = (IHTMLWindow2) this.chatBrowser.Document.Window.DomWindow;
@@ -105,5 +117,37 @@ namespace CampfireGui
 			var reader = new StreamReader(stream);
 			return reader.ReadToEnd();
 		}
+
+		private void SaveState() 
+		{
+		  if (WindowState == FormWindowState.Normal) {
+			Properties.Settings.Default.MainFormLocation = Location;
+			Properties.Settings.Default.MainFormSize = Size;
+		  } else {
+			Properties.Settings.Default.MainFormLocation = RestoreBounds.Location;
+			Properties.Settings.Default.MainFormSize = RestoreBounds.Size;
+		  }
+		  Properties.Settings.Default.MainFormState = WindowState;
+		  Properties.Settings.Default.Save();
+		}
+
+		private void RestoreState() 
+		{
+		  if (Properties.Settings.Default.MainFormSize == new Size(0, 0)) {
+			return; // state has never been saved
+		  }
+		  StartPosition = FormStartPosition.Manual;
+		  Location = Properties.Settings.Default.MainFormLocation;
+		  Size = Properties.Settings.Default.MainFormSize;
+		  // I don't like an app to be restored minimized, even if I closed it that way
+		  WindowState = Properties.Settings.Default.MainFormState == 
+			FormWindowState.Minimized ? FormWindowState.Normal : Properties.Settings.Default.MainFormState;
+		}
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			this.SaveState();
+		}
+
 	}
 }
