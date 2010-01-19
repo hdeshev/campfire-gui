@@ -10,11 +10,11 @@
 
 	window.onload = (function() {
 		document.onclick = onclick;
+		appendChatListener();
 	});
 })();
 
-//TODO: this doesn't get invoked at all.
-Campfire.GrowlNotifier = Class.create({
+Campfire.MessageReceivedNotifier = Class.create({
 	initialize: function(chat) {
 		this.chat = chat;
 	},
@@ -23,4 +23,15 @@ Campfire.GrowlNotifier = Class.create({
 		window.external.MessageReceived();
 	}
 });
-Campfire.Responders.push("GrowlNotifier");
+
+function appendChatListener()
+{
+	Campfire.Responders.push("MessageReceivedNotifier");
+
+	var chat = window.chat;
+	chat.register.apply(chat, Campfire.Responders);
+	chat.dispatch("chatCreated");
+}
+
+
+

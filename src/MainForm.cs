@@ -33,15 +33,11 @@ namespace CampfireGui
 			this.chatBrowser.Navigating += chatBrowser_Navigating;
 			this.chatBrowser.Navigated += chatBrowser_Navigated;
 			this.chatBrowser.Navigate(this.config.CampfireUrl);
+			this.chatBrowser.DocumentCompleted += chatBrowser_DocumentCompleted;
 		}
 
 		void chatBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
 		{
-			var url = e.Url.ToString().ToLower();
-			if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
-			{
-				this.ChatRoom();
-			}
 		}
 
 		void chatBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e)
@@ -61,11 +57,11 @@ namespace CampfireGui
 
 		private void chatBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
-			//var url = e.Url.ToString().ToLower();
-			//if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
-			//{
-			//    this.ChatRoom();
-			//}
+			var url = e.Url.ToString().ToLower();
+			if (Regex.IsMatch(url, @"campfirenow.com/room/\d+$"))
+			{
+			    this.ChatRoom();
+			}
 		}
 
 		protected override void OnActivated(EventArgs e)
